@@ -32,7 +32,7 @@ router.post("/", protect, async (req, res) => {
   });
 
 
-//get a tag
+//get a tag by name
 router.get("/get/:name", protect, async (req, res) => {
 
     const tagName = req.params.name;
@@ -48,7 +48,7 @@ router.get("/get/:name", protect, async (req, res) => {
     }
   });
 
-//get two tags
+//get two tags by names
 router.get("/get/:name1/:name2", protect, async (req, res) => {
 
   const tagName1 = req.params.name1;
@@ -69,7 +69,7 @@ router.get("/get/:name1/:name2", protect, async (req, res) => {
   }
 });
 
-//get three tags
+//get three tags by names
 router.get("/get/:name1/:name2/:name3", protect, async (req, res) => {
 
   const tagName1 = req.params.name1;
@@ -92,7 +92,7 @@ router.get("/get/:name1/:name2/:name3", protect, async (req, res) => {
   }
 });
 
-//delete tag 
+//delete tag by id
 router.delete("/:id",protect, async (req, res) => {
    
     try {
@@ -104,7 +104,7 @@ router.delete("/:id",protect, async (req, res) => {
 
   });
 
-//update tag 
+//update tag  by id
 router.put("/:id",protect, async (req, res) => {
   
 
@@ -119,11 +119,12 @@ router.put("/:id",protect, async (req, res) => {
   });
 
 
-//get top 10/100 tags
+//get number tags
 router.get("/trend/:number", protect, async (req, res) => {
-
+    // number : number of tags wished
     try {
-      const tags = await Tag.find({}).sort('createdAt').limit(req.params.number)
+      // get number of tags wished 
+      const tags = await Tag.find({}).limit(req.params.number)
       res.status(200).json(tags);
     } catch (err) {
       res.status(500).json(err);
@@ -136,10 +137,14 @@ router.put("/addtopeople/:name",protect, async (req, res) => {
     const tag = await Tag.findOne({name : req.params.name});
     const user = await User.findById(req.body.userId);
     
+    // check if tag exist
     if(tag){
         try {      
+        // check if user not already tagged
         if (!tag.peoples.includes(req.body.userId)) {
+            // add user id to people tagged
             await tag.updateOne({ $push: { peoples: req.body.userId } });
+            // add tag id to user tags
             await user.updateOne({ $push: { tags: req.params.name } });
             res.status(200).json("The tag has been added");
         } else {
@@ -149,13 +154,17 @@ router.put("/addtopeople/:name",protect, async (req, res) => {
         res.status(500).json(err);
         }
     }
+    // if tag doesn't exist
     else{
+        // create the tag
         const newTag = new Tag({
             name: req.params.name,
           });     
         const tag = await newTag.save();
         try {      
+            // add user id to people tagged
             await tag.updateOne({ $push: { peoples: req.body.userId } });
+            // add tag id to user tags
             await user.updateOne({ $push: { tags: req.params.name } });
             res.status(200).json("The tag has been added");
         } catch (err) {
@@ -170,7 +179,9 @@ router.put("/removetopeople/:name",protect, async (req, res) => {
       const tag = await Tag.findOne({name : req.params.name});
       const user = await User.findById(req.body.userId);
       if (tag.peoples.includes(req.body.userId)) {
+        // remove user id to people tagged
         await tag.updateOne({ $pull: { peoples: req.body.userId } });
+        // remove tag id to user tags
         await user.updateOne({ $pull: { tags: req.params.name } });
         res.status(200).json("The tag has been removed");
       }else {
@@ -183,16 +194,18 @@ router.put("/removetopeople/:name",protect, async (req, res) => {
 
 
 //add tag to a post
-
 router.put("/addtopost/:name",protect, async (req, res) => {
   const tag = await Tag.findOne({name : req.params.name});
   const post = await Post.findById(req.body.postId);
   console.log(req.body.postId)
   
+  // check if tag exist
   if(tag){
       try {      
       if (!tag.posts.includes(req.body.postId)) {
+          // add post id to posts tagged
           await tag.updateOne({ $push: { posts: req.body.postId } });
+          // add tag id to post tags
           await post.updateOne({ $push: { tags: req.params.name } });
           res.status(200).json("The tag has been added");
       } else {
@@ -202,13 +215,17 @@ router.put("/addtopost/:name",protect, async (req, res) => {
       res.status(500).json(err);
       }
   }
+  // if tag doesn't exist
   else{
+    // create the tag
       const newTag = new Tag({
           name: req.params.name,
         });     
       const tag = await newTag.save();
-      try {      
+      try {    
+          // add post id to posts tagged  
           await tag.updateOne({ $push: { posts: req.body.postId } });
+          // add tag id to post tags
           await post.updateOne({ $push: { tags: req.params.name } });
           res.status(200).json("The tag has been added");
       } catch (err) {
@@ -218,13 +235,14 @@ router.put("/addtopost/:name",protect, async (req, res) => {
 });
 
 //remove tag to a post
-
 router.put("/removetopost/:name",protect, async (req, res) => {
   try {
     const tag = await Tag.findOne({name : req.params.name});
     const post = await Post.findById(req.body.postId);
     if (tag.posts.includes(req.body.postId)) {
+      // remove post id to people tagged
       await tag.updateOne({ $pull: { posts: req.body.postId } });
+      // remove tag id to post tags
       await post.updateOne({ $pull: { tags: req.params.name } });
       res.status(200).json("The tag has been removed");
     }else {
@@ -261,6 +279,9 @@ router.get("/posts/:id", protect,  async (req, res) => {
         return Post.findById(postId);
       })
     );
+    
+    // sort posts to get the last  first
+    posts.sort((post1,post2) => new Date(post2.createdAt).getTime() - new Date(post1.createdAt).getTime());
 
     res.status(200).json(posts);
   } catch (err) {

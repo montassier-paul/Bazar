@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 const NewOutfitPost = () => {
 
   let navigate = useNavigate(); 
-
+  // Navigate to new Post Page when clicked
   const HandleOnclick = () => {
     navigate("/NewPost");
 }
@@ -19,13 +19,8 @@ const NewOutfitPost = () => {
       <div className="bg-white w-full opacity-100 
          h-full object-cover rounded-3xl group-hover:opacity-60 cursor-pointer active:bg-gray-600"
          onClick={HandleOnclick}>     
-      </div>
-
-      
+      </div>    
     </div>
-
-
-
     </>
 
   )

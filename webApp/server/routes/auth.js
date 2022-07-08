@@ -39,9 +39,10 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
-
+    // check if password is the same
     const validPassword = await bcrypt.compare(req.body.password, user.password)
 
+    
     if(validPassword){
 
     res.status(200).json({

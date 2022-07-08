@@ -4,10 +4,12 @@ import {BsPeopleFill}  from "react-icons/bs";
 
 const PeoplesClothesPost = ({updatePage}) => {
 
+  // onclick force search page to reload users tagged
   const HandlePeopleOnClick = () => {
     updatePage(false)
   }
 
+  // onclick force search page to reload posts tagged
   const HandleClotheOnClick = () => {
     updatePage(true)
   }

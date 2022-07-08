@@ -7,14 +7,12 @@ import { useSelector} from 'react-redux'
 
 export const TrendsFeed = () => {
 
-  const url = process.env.REACT_APP_BACKEND_URL
 
   const [tagsData, setTagsData] = useState([])
   const { user } = useSelector((state) => state.auth)
-  
+  const API_URL = process.env.REACT_APP_BACKEND_URL
 
-  const API_URL = process.env.REACT_APP_BACKEND_URL + '/api/tags/trend/100'
-
+  // fetche 250 tags for tags wall
   useEffect(() => {
     const fetchUserInfo = async () => {
 
@@ -24,7 +22,7 @@ export const TrendsFeed = () => {
             },
         }
         
-        const response = await axios.get(API_URL, config)
+        const response = await axios.get(API_URL + '/api/tags/trend/250', config)
 
         console.log(response.data)
         setTagsData(response.data) 
@@ -38,7 +36,7 @@ export const TrendsFeed = () => {
         
         {tagsData
         ? tagsData.map((tag, id)=>{
-          return <TagCard tag={tag} id={id}/>
+            return <TagCard tag={tag} id={id}/>
           })
         : <></>
         }

@@ -18,7 +18,6 @@ const ImgPin = ({postId}) => {
   let navigate = useNavigate();
   const dispatch = useDispatch()
   const url = process.env.REACT_APP_BACKEND_URL
-
   const { user } = useSelector((state) => state.auth)
   const [liked, setLiked] = useState(false);
   const [postData, setPostData] = useState({"clothesRef" : []})
@@ -27,16 +26,15 @@ const ImgPin = ({postId}) => {
   const [comments, setComments] = useState([])
   const [similarTag, setSimilarTag] = useState([])
   const [tags, setTags] = useState([])
-  const API_URL = url + '/api/posts/'
   const [follow, setFollow] = useState("follow")
   const [updateComments, setUpdateComments] = useState(0)
 
-
+  // random number => select randomly post tag to display similar product
   function getRandomInt(max) {
     return Math.floor(Math.random() * max);
   }
 
-
+  // force reload message when new comment added
   const updating = () => {
     if(updateComments === 0){
       setUpdateComments(1)
@@ -46,27 +44,31 @@ const ImgPin = ({postId}) => {
     }
   }
 
-
+  //  navigate to corresponding profile
   const HandleProfileOnclick = () => {
     navigate(`/Profile/${profileData._id}`);
     
   }
 
+  // open item link when tag clicked
   const onclick = (index) => {
     // console.log(postData.links[index.id].link)
     window.open(postData.links[index.id].link)
   }
 
+  // Show image item tag when mouse inside image
   const onMouseEnter = () => {
     setIsShown(true)
     console.log(isShown)
   }
 
+  // Hide image item tag when mouse leave the image
   const onMouseLeave = () => {
     setIsShown(false)
     console.log(isShown)
   }
 
+  // get tag name to display similar product
   useEffect(() => {
     const fetchSimalarTag = async () => {
 
@@ -75,13 +77,11 @@ const ImgPin = ({postId}) => {
       Authorization: `Bearer ${String(user.token)}`,
       },
   }  
-    // console.log("imgPin get similar tag")
-    
 
+    
     if(postData.tags){
       console.log(postData.tags[0])
       let index = getRandomInt(postData.tags.length)
-
       const response = await axios.get(url + "/api/tags/get/" + String(postData.tags[index]), config)
       setSimilarTag(response.data[0]._id)
     }
@@ -93,7 +93,7 @@ const ImgPin = ({postId}) => {
   }, [postData])
 
 
-
+  // Update database when image liked/unliked
   const HandleLikeOnclick = async() => {
     console.log(postData.clothesPosition)
     const config = {
@@ -114,7 +114,7 @@ const ImgPin = ({postId}) => {
     }
   }
 
-
+  // get post data
   useEffect(() => {
     const fetchUserInfo = async () => {
         const config = {
@@ -123,22 +123,23 @@ const ImgPin = ({postId}) => {
             },
         }
         
-        const response = await axios.get(API_URL + String(postId), config)
+        // get post data
+        const response = await axios.get(url + '/api/posts/' + String(postId), config)
         
         console.log("ici")
         console.log(response.data)
         setPostData(response.data)
 
-
+        // get user  data from user who posted the post
         const profile_response = await axios.get(url + "/api/users/" + String(response.data.userId), config)
         setProfileData(profile_response.data)
 
-
+        // get comments of the post
         const comments_response = await axios.get(url + "/api/messages/post/" + String(postId), config)
         setComments(comments_response.data)
 
-
-        if(response.tags.length === 1){
+        //  get tags added to the post
+        if(response.data.tags.length === 1){
           setTags([])
           const res = await axios.get(url + '/api/tags/get/'+ String(response.data.tags[0]), config)
           console.log(res.data)
@@ -157,10 +158,11 @@ const ImgPin = ({postId}) => {
           setTags(res.data)
         }
 
-        if(profile_response.followers.includes(user._id)){
+        // check if user follow the user who post
+        if(profile_response.data.followers.includes(user._id)){
           setFollow("unfollow")
         }
-
+        // check if user like the image
         if(response.data.likes.includes(user._id)){
           setLiked(true)
         }
@@ -170,7 +172,7 @@ const ImgPin = ({postId}) => {
   }, [postId]);
 
 
-
+  // get message of the post when new messages added
   useEffect(() => {
     const fetchMessages = async () => {
         const config = {
@@ -188,7 +190,7 @@ const ImgPin = ({postId}) => {
   }, [updateComments]);
 
 
-  
+  // Handle follow/unfollow click
   const handleFollowButton = async() => {
   
     const config = {
@@ -232,132 +234,114 @@ const ImgPin = ({postId}) => {
       
 
       <div className='grow flex justify-center items-center'>
-      <div className='h-96 m-10 w-fit rounded-3xl bg-transparent flex flex-row justify-start md:bg-white'>
-        {/* LeftSide */}
-        <div className='w-56 h-auto'>
-        <div className='relative h-auto w-56 bg-black group'>
+        <div className='h-96 m-10 w-fit rounded-3xl bg-transparent flex flex-row justify-start md:bg-white'>
+          {/* LeftSide */}
+          <div className='w-56 h-auto'>
+            <div className='relative h-auto w-56 bg-black group'>
             {/* Image */}
 
-          <div className='absolute top-0 left-0 w-full opacity-100 
-            cursor-pointer overflow-auto rounded-3xl group-hover:opacity-60 bg-slate-200'
-            onMouseEnter={onMouseEnter}
-            onMouseLeave={onMouseLeave}>
-            {postData.clothesPosition && isShown
-            ?<ImageMapper
-                    src={postData.image}
-                    map={JSON.parse(postData.clothesPosition)}
-                    onClick={(index) => onclick(index)}
-                    width={224}
-                    height={384}
-                />
-            : <img
-            src={postData.image}
-            alt=""
-            className="w-full h-auto"
-          />
+              <div className='absolute top-0 left-0 w-full opacity-100 
+                cursor-pointer overflow-auto rounded-3xl group-hover:opacity-60 bg-slate-200'
+                onMouseEnter={onMouseEnter}
+                onMouseLeave={onMouseLeave}>
+                {postData.clothesPosition && isShown
+                ?<ImageMapper
+                        src={postData.image}
+                        map={JSON.parse(postData.clothesPosition)}
+                        onClick={(index) => onclick(index)}
+                        width={224}
+                        height={384}
+                    />
+                : <img
+                src={postData.image}
+                alt=""
+                className="w-full h-auto"
+              />
+                  }
+            </div>
+            {/* Button like */}
+            <div 
+            className='absolute top-2 cursor-pointer left-6 opacity-0 hover:scale-125 group-hover:opacity-100'
+            onClick={HandleLikeOnclick}>
+              {liked
+              ?<AiFillHeart fontSize={38} color='red'/>
+              :<AiOutlineHeart fontSize={38} color='red'/>
               }
-
-
+            </div>       
           </div>
-          {/* Button like */}
-          <div 
-          className='absolute top-2 cursor-pointer left-6 opacity-0 hover:scale-125 group-hover:opacity-100'
-          onClick={HandleLikeOnclick}>
-            {liked
-            ?<AiFillHeart fontSize={38} color='red'/>
-            :<AiOutlineHeart fontSize={38} color='red'/>
-            }
-          </div>
-
-      
-          
-        </div>
         </div>
 
           {/* RightSide */}
           <div className='hidden md:block'>
-          <div className='h-full w-[400px] rounded-br-3xl rounded-tr-3xl flex flex-col '>
-            {/* Top */}
-            <div className='w-full  flex flex-row justify-between h-2/6 mt-4 ml-4 pr-10'>
-              {/* Tags */}
-              <div className='w-3/4 flex flex-row justify-start flex-wrap'>
-                  {!postData.tags || postData.tags.length == 0
-                  ?<div>no tags</div>
-                  :tags.map((tag, id)=>{
-                    return <TagCard tag={tag} id={id}/>
-                  }) 
+            <div className='h-full w-[400px] rounded-br-3xl rounded-tr-3xl flex flex-col '>
+              {/* Top */}
+              <div className='w-full  flex flex-row justify-between h-2/6 mt-4 ml-4 pr-10'>
+                {/* Tags */}
+                <div className='w-3/4 flex flex-row justify-start flex-wrap'>
+                    {!postData.tags || postData.tags.length == 0
+                    ?<div>no tags</div>
+                    :tags.map((tag, id)=>{
+                      return <TagCard tag={tag} id={id}/>
+                    }) 
 
-                  }            
-              </div>
-              {/* Profile Picture and follow and unfollow button */}
-              <div className='flex flex-col justify-start'>
-                {/* profile picture */}
-                <div className="w-full flex items-center justify-center h-auto cursor-pointer hover:scale-125">
-                    {!profileData.profilePicture || profileData.profilePicture === " "
-
-                      ?<CgProfile fontSize={32} onClick={HandleProfileOnclick}/>
-                      :<img 
-                      src={profileData.profilePicture} 
-                      alt="Profile Picture" 
-                      className='rounded-full w-12' 
-                      onClick={HandleProfileOnclick}
-                      />
-
-                    }
+                    }            
                 </div>
-                {/* follow unfollow button */}
-                
+                {/* Profile Picture and follow and unfollow button */}
+                <div className='flex flex-col justify-start'>
+                  {/* profile picture */}
+                  <div className="w-full flex items-center justify-center h-auto cursor-pointer hover:scale-125">
+                      {!profileData.profilePicture || profileData.profilePicture === " "
 
-              {profileData._id === user._id 
-              ?<></>
-              :<div className='bg-blue-300 hover:bg-blue-400 rounded-2xl mt-2 h-6  w-20'>
-              <button type='button' className='w-full' onClick={handleFollowButton}>
-                {follow}
-              </button>
-              </div>}
+                        ?<CgProfile fontSize={32} onClick={HandleProfileOnclick}/>
+                        :<img 
+                        src={profileData.profilePicture} 
+                        alt="Profile Picture" 
+                        className='rounded-full w-12' 
+                        onClick={HandleProfileOnclick}
+                        />
 
+                      }
+                  </div>
+                  {/* follow unfollow button */}
+                  
+
+                {profileData._id === user._id 
+                ?<></>
+                :<div className='bg-blue-300 hover:bg-blue-400 rounded-2xl mt-2 h-6  w-20'>
+                  <button type='button' className='w-full' onClick={handleFollowButton}>
+                    {follow}
+                  </button>
+                </div>}
+
+                  </div>
+              </div>
+              {/* Buttom */}
+              <div className='w-full h-full  rounded-br-3xl flex flex-col justify-start
+              items-center pt-2'>
+                {/* Comments */}
+                <div 
+                className='w-5/6 h-44 rounded-3xl flex flex-row 
+                flex-wrap overflow-y-auto'>
+                  {comments.map((comment, id)=>{
+                    return <Comment comment={comment} id={id}/>
+                  })}         
+                </div>    
+                {/* add comments */}
+                <div className='w-5/6 h-20 rounded-3xl mt-2'>
+                  <AddComment postId={postId} updating={updating}/>       
+                </div>
               </div>
             </div>
-            {/* Buttom */}
-            <div className='w-full h-full  rounded-br-3xl flex flex-col justify-start
-            items-center pt-2'>
-              {/* Comments */}
-
-              <div 
-              className='w-5/6 h-44 rounded-3xl flex flex-row 
-              flex-wrap overflow-y-auto'>
-
-                {comments.map((comment, id)=>{
-                  return <Comment comment={comment} id={id}/>
-                })}
-                  
-              </div>
-                
-              {/* add comments */}
-
-              <div className='w-5/6 h-20 rounded-3xl mt-2'>
-
-                <AddComment postId={postId} updating={updating}/>
-                  
-              </div>
-            </div>
-          </div>
+          </div>  
+        </div>
       </div>
-
-      
-      </div>
-      </div>
-
-        }
+      }
 
 
       
       {similarTag &&
         <SearchFeed dataId={similarTag}/>
       }
-
-
-
 
     
     </div>

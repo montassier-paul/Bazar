@@ -13,13 +13,10 @@ const FollowingsBar = ({userId}) => {
   const { user } = useSelector((state) => state.auth)
   const dispatch = useDispatch()
   const loader = useSelector(state => state.loader.value)
+  const API_URL = process.env.REACT_APP_BACKEND_URL
 
 
-
-  const API_URL = process.env.REACT_APP_BACKEND_URL + '/api/users/'
-
-
-
+  // load user infor, update forced when follow/unfollow button clicked
   useEffect(() => {
       const fetchUserInfo = async () => {
 
@@ -29,7 +26,7 @@ const FollowingsBar = ({userId}) => {
               },
           }
           
-          const response = await axios.get(API_URL + String(user._id), config)
+          const response = await axios.get(API_URL +  '/api/users/' + String(user._id), config)
 
           console.log(response.data)
           setUserData(response.data) 
@@ -43,14 +40,13 @@ const FollowingsBar = ({userId}) => {
     <div className='w-80 flex overflow-x-scroll rounded scrollbar-hide h-full mt-5'>
 
 
-        {userData.followings
-        ? userData.followings.map((userId, id)=>{
-            return <ProfileCard userId={userId} id={id}/>
-          })
-        : <></>
-        }
+      {userData.followings
+      ? userData.followings.map((userId, id)=>{
+          return <ProfileCard userId={userId} id={id}/>
+        })
+      : <></>
+      }
     
-     
 
     </div>
   )

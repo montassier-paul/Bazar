@@ -5,6 +5,7 @@ const TagCard = ({tag}) => {
 
     let navigate = useNavigate();
 
+    // Navigate to corresponding search page
     const HandleTagOnclick = () => {
       navigate(`/Search/${tag._id}`);
     }

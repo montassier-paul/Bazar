@@ -9,15 +9,14 @@ const usersRoute = require("./routes/users");
 const tagsRoute = require("./routes/tags");
 const postsRoute = require("./routes/posts");
 const messagesRoute = require("./routes/messages");
-
+dotenv.config();
 
 port = process.env.PORT || 8800
 
 const app = express(); 
 
 
-dotenv.config();
-
+// connect to the mongoDB database
 mongoose.connect(
     process.env.MONGO_URL,
     { useNewUrlParser: true, useUnifiedTopology: true },
@@ -26,7 +25,7 @@ mongoose.connect(
     }
   );
 
-
+// add middleware
 app.use(express.json());
 app.use(cors({ origin: true }))
 app.use(helmet());
@@ -36,6 +35,7 @@ app.use("/api/users", usersRoute);
 app.use("/api/tags", tagsRoute);
 app.use("/api/posts", postsRoute);
 app.use("/api/messages", messagesRoute);
+
 
 app.listen(port, ()=> {
     console.log("Backend server is running")

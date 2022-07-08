@@ -8,7 +8,6 @@ import {load} from "../features/loader/loaderSlice"
 function ProfileModal({ modalOpened, setModalOpened, profileData }) {
 
   const url = process.env.REACT_APP_BACKEND_URL
-
   const theme = useMantineTheme();
   const { user } = useSelector((state) => state.auth)
   const dispatch = useDispatch()
@@ -24,11 +23,9 @@ function ProfileModal({ modalOpened, setModalOpened, profileData }) {
 
   const [coverPicture, setCoverPicture] = useState();
   const [profilePicture, setProfilePicture] = useState();
-
   const {username, tag1, tag2, tag3, desc} = formData
 
   // modify setForm data with profile data
-
   useEffect( () => {
     if(profileData.username){
       setFormData((prevState) => ({
@@ -43,7 +40,7 @@ function ProfileModal({ modalOpened, setModalOpened, profileData }) {
   }, [profileData])
 
 
-  
+  // update form informations
   const onChange = (e) => {
 
     console.log({
@@ -58,12 +55,14 @@ function ProfileModal({ modalOpened, setModalOpened, profileData }) {
     }))
   }
 
+  // if load profile image
   const onProfileChange = (e) => {
     const [file] = e.target.files;
     setProfilePicture(file)
 
   };
 
+  // if load cover image
   const onCoverChange = (e) => {
     const [file] = e.target.files;
     setCoverPicture(file)
@@ -72,99 +71,98 @@ function ProfileModal({ modalOpened, setModalOpened, profileData }) {
 
 
 
-  
+  // Update database with new user data
   const onSubmit = async(e) => {
     e.preventDefault();
     const config = {
         headers: {
         Authorization: `Bearer ${String(user.token)}`,
         },
-            }
-  // send formData
-      const res1 = await axios.put(url + '/api/users/' + String(user._id),
-      formData,
-    config)
-
-
-    if(formData.tag1.length > 0 &  profileData.tags[0] !== formData.tag1  ){
-    const res2 = await axios.put(url + "/api/tags/addtopeople/" + String(formData.tag1),{
-      "userId" : String(profileData._id),
-    }, 
-    config)
-    if(profileData.tags[0]){
-      const res3 = await axios.put(url + "/api/tags/removetopeople/" + String(profileData.tags[0]),{
-      "userId" : String(profileData._id),
-    }, 
-    config)
-
     }
+    // send formData
+    const res1 = await axios.put(url + '/api/users/' + String(user._id),formData,
+    config)
+
+    // update tag database
+    if(formData.tag1.length > 0 &  profileData.tags[0] !== formData.tag1  ){
+      const res2 = await axios.put(url + "/api/tags/addtopeople/" + String(formData.tag1),{
+        "userId" : String(profileData._id),
+      }, config)
+      if(profileData.tags[0]){
+        const res3 = await axios.put(url + "/api/tags/removetopeople/" + String(profileData.tags[0]),{
+        "userId" : String(profileData._id),}, 
+      config)
+
+      }
 
     }
 
     if(formData.tag2.length > 0 &  profileData.tags[1] !== formData.tag2  ){
-    const res4 = await axios.put(url + "/api/tags/addtopeople/" + String(formData.tag2),{
-      "userId" : String(profileData._id),
-    }, 
-    config)
+      const res4 = await axios.put(url + "/api/tags/addtopeople/" + String(formData.tag2),{
+        "userId" : String(profileData._id),
+      }, 
+      config)
 
-    if(profileData.tags[1] ){
-      const res5 = await axios.put(url + "/api/tags/removetopeople/" + String(profileData.tags[1]),{
-      "userId" : String(profileData._id),
-    }, 
-    config)
+      if(profileData.tags[1] ){
+        const res5 = await axios.put(url + "/api/tags/removetopeople/" + String(profileData.tags[1]),{
+        "userId" : String(profileData._id),
+      }, 
+      config)
 
-    }
+      }
     }
 
 
     if(formData.tag3.length > 0 &  profileData.tags[2] !== formData.tag3 ){
-    const res6 = await axios.put(url + "/api/tags/addtopeople/" + String(formData.tag3),{
-      "userId" : String(profileData._id),
-    }, 
-    config)
-    
+      const res6 = await axios.put(url + "/api/tags/addtopeople/" + String(formData.tag3),{
+        "userId" : String(profileData._id),
+      }, 
+      config)
+      
 
-    if(profileData.tags[2]){
-      const res7 = await axios.put(url + "/api/tags/removetopeople/" + String(profileData.tags[2]),{
-      "userId" : String(profileData._id),
-    }, 
-    config)
+      if(profileData.tags[2]){
+        const res7 = await axios.put(url + "/api/tags/removetopeople/" + String(profileData.tags[2]),{
+        "userId" : String(profileData._id),
+      }, 
+      config)
+
+      }
 
     }
 
-  }
-
-
+    // load profile picture
     if(profilePicture){
       const res7 = await axios.put(url + "/api/users/profilePicture/" + String(user._id),{
       "userId" : String(profileData._id),
       "profilePicture": profilePicture
-    }, 
-    {
-      headers: {
-      Authorization: `Bearer ${String(user.token)}`,
-      "Content-Type": "multipart/form-data"
+     },
 
-      },
-          }
+      {
+        headers: {
+        Authorization: `Bearer ${String(user.token)}`,
+        "Content-Type": "multipart/form-data"
+
+        },
+            }
       )
 
       dispatch(load())
 
     }
 
+    // load cover Picture
     if(coverPicture){
       const res7 = await axios.put(url + "/api/users/coverPicture/" + String(user._id),{
       "userId" : String(profileData._id),
       "coverPicture": coverPicture
-    }, 
-    {
-      headers: {
-      Authorization: `Bearer ${String(user.token)}`,
-      "Content-Type": "multipart/form-data"
-      },
-          }
-      )
+      }, 
+      {
+        headers: {
+        Authorization: `Bearer ${String(user.token)}`,
+        "Content-Type": "multipart/form-data"
+        },
+            }
+        )
 
     }
 
@@ -173,7 +171,7 @@ function ProfileModal({ modalOpened, setModalOpened, profileData }) {
 
   }
 
-
+  // Reset modal data when modal closed
   const onClose = () => {
     setFormData({
       username: '',
@@ -204,7 +202,7 @@ function ProfileModal({ modalOpened, setModalOpened, profileData }) {
       className="flex flex-col justify-start space-y-5"
       onSubmit={onSubmit}>
         <div className="flex w-full justify-center items-center">
-        <h3>Update your profile</h3>
+          <h3>Update your profile</h3>
         </div>
 
         <div className="">

@@ -10,15 +10,15 @@ const TopBar = () => {
     <div className= "flex flex-row justify-center h-16 w-full bg-white  pb-2 pl-3 pr-2 space-x-12">
         {/* TrendTags bar */}
         <div className='hidden xl:block'>
-        <TrendsBar/>
+          <TrendsBar/>
         </div>
         {/* search input */}
         <div className=''>
-        <ButtonTopBar/>
+          <ButtonTopBar/>
         </div>
         {/* followings bar */}
         <div className='hidden md:block'>
-        <FollowingsBar className/>
+          <FollowingsBar className/>
         </div>
         
     </div>

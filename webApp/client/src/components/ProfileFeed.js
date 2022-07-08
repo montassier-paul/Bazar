@@ -10,15 +10,11 @@ import { useSelector} from 'react-redux'
 
 const Feed = ({profileId}) => {
 
-    const API_URL = process.env.REACT_APP_BACKEND_URL + '/api/posts/profile/'
-
-
+    const API_URL = process.env.REACT_APP_BACKEND_URL
     const [posts, setPosts] = useState([])
     const { user } = useSelector((state) => state.auth)
 
-
-
-
+    // get user's posts
     useEffect(() => {
         const fetchPosts = async () => {
 
@@ -29,7 +25,7 @@ const Feed = ({profileId}) => {
             }            
 
 
-            const response = await axios.get(API_URL + String(profileId), config)
+            const response = await axios.get(API_URL + '/api/posts/profile/' + String(profileId), config)
             console.log(response.data)
             setPosts(response.data) 
         };
@@ -42,14 +38,14 @@ const Feed = ({profileId}) => {
 
 
 
-        <div>
-            <div className='hidden md:block'>
-                <ProfileInfo profileId={profileId}/>
-            </div>
-            <div className='md:hidden'>
-                <ProfilePost profileId={profileId}/>
-            </div> 
-        </div>
+      <div>
+          <div className='hidden md:block'>
+              <ProfileInfo profileId={profileId}/>
+          </div>
+          <div className='md:hidden'>
+              <ProfilePost profileId={profileId}/>
+          </div> 
+      </div>
 
 
       {posts.map((post, id)=>{

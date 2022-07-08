@@ -8,17 +8,14 @@ import {CgProfile} from "react-icons/cg"
 
 const ProfileCard = ({userId}) => {
 
- 
   const [userData, setUserData] = useState({})
+  let navigate = useNavigate();
   const { user } = useSelector((state) => state.auth)
   const loader = useSelector(state => state.loader.value)
+  const API_URL = process.env.REACT_APP_BACKEND_URL
 
 
-
-  const API_URL = process.env.REACT_APP_BACKEND_URL + '/api/users/'
-
-
-
+  //  Load user data. Reload forced when follow/unfollow button clicked
   useEffect(() => {
       const fetchUserInfo = async () => {
 
@@ -28,23 +25,20 @@ const ProfileCard = ({userId}) => {
               },
           }
           
-          const response = await axios.get(API_URL + String(userId), config)
+          const response = await axios.get(API_URL + '/api/users/' + String(userId), config)
 
           setUserData(response.data) 
       };
       fetchUserInfo();
     }, [user, loader]);
 
-
-  let navigate = useNavigate();
-
-    const HandleImageOnclick = () => {
-      navigate(`/Profile/${userId}`);
-    }
+  // Navigate to corresponding profile page
+  const HandleImageOnclick = () => {
+    navigate(`/Profile/${userId}`);
+  }
 
   return (
-    
-
+  
     <div className='flex justify-center items-center mr-1 ml-1 pr-1 pl-1 h-6'
     onClick={HandleImageOnclick}>
       {!userData.profilePicture || userData.profilePicture.length === 0
@@ -56,7 +50,7 @@ const ProfileCard = ({userId}) => {
           className='rounded-full  cursor-pointer h-6 w-auto' 
           />
 
-          }
+      }
       <div className='opacity-0 cursor-default'>aaaa</div>
     </div>
   )

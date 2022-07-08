@@ -12,12 +12,7 @@ const SearchFeed = ({dataId}) => {
 
     
     const url = process.env.REACT_APP_BACKEND_URL
-
-
     const [API_URL, setAPI_URL] = useState(url + '/api/tags/posts/')
-
-
-
     const [posts, setPosts] = useState([])
     const { user } = useSelector((state) => state.auth)
     const [clothesDisplay, setClothesDisplay] = useState(true)
@@ -38,14 +33,13 @@ const SearchFeed = ({dataId}) => {
 
     }, [clothesDisplay])
 
+    // new request when post or people feed selected by PeoplesClothesPost children component
     const updatePage = (bool) => {
         setClothesDisplay(bool)
-        // setPosts([]) 
-
-        
+   
      }
 
-
+    // get all people or post tagged
     useEffect(() => {
 
         const fetchPosts = async () => {
@@ -72,17 +66,17 @@ const SearchFeed = ({dataId}) => {
     <div className='m-2 flex flex-row overflow-auto justify-start items-center flex-wrap scrollbar-hide'>
 
 
-    <PeoplesClothesPost updatePage={updatePage}/>
+        <PeoplesClothesPost updatePage={updatePage}/>
 
 
-    {clothesDisplay & posts.length > 0
-    ?posts.map((post, id)=>{
-        return <Post post={post} id={id}/>
-        })
-    :posts.map((post, id)=>{
-        return <ProfilePost profileId={post._id} id={id}/>
-        })
-        }
+        {clothesDisplay & posts.length > 0
+        ?posts.map((post, id)=>{
+            return <Post post={post} id={id}/>
+            })
+        :posts.map((post, id)=>{
+            return <ProfilePost profileId={post._id} id={id}/>
+            })
+            }
 
 
     </div>

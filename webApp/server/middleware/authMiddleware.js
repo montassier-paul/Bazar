@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 
+// middleware to check if request have a user token
 const protect = async (req, res, next) => {
   let token
 
