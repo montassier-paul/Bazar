@@ -15,8 +15,8 @@ The idea of the project is to create interactive images and videos. The products
 link : https://cool-otter-b6e1a8.netlify.app
 
 ![WebApp](https://user-images.githubusercontent.com/99366674/178115777-f736061a-d28a-4c04-8046-81b2e2eb1f95.gif)
-![plot](./documentations/Home.png)
-![plot](./documentations/Profile.png)
+![plot](./documentations/home.png)
+![plot](./documentations/profile.png)
 ![plot](./documentations/Pin.png)
 
 # Clickable image/video
