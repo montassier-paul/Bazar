@@ -12,4 +12,19 @@ The idea of the project is to create interactive images and videos. The products
 
 # Web APP
 
-# Clickable image
+link : https://cool-otter-b6e1a8.netlify.app
+
+![WebApp](https://user-images.githubusercontent.com/99366674/178115777-f736061a-d28a-4c04-8046-81b2e2eb1f95.gif)
+![plot](./documentations/Home.png)
+![plot](./documentations/Profile.png)
+![plot](./documentations/Pin.png)
+
+# Clickable image/video
+
+Model used to detect clothes : Yolov5
+Database : DeepFashion (https://mmlab.ie.cuhk.edu.hk/projects/DeepFashion/AttributePrediction.html)
+
+
+![interactive_video](https://user-images.githubusercontent.com/99366674/178116881-4a18d543-cda0-4b15-a8ac-806d51c41de6.gif)
+
+
