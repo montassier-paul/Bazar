@@ -28,6 +28,7 @@ Pin page
 # Clickable image/video
 
 Model used to detect clothes : Yolov5
+
 Database : DeepFashion (https://mmlab.ie.cuhk.edu.hk/projects/DeepFashion/AttributePrediction.html)
 
 
